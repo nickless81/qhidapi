@@ -1,0 +1,11 @@
+
+include(compat.qdocconf)
+
+outputdir   = build/docs
+
+headerdirs  = .
+
+sourcedirs  = .
+
+depends += qtcore
+
