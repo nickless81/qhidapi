@@ -4,13 +4,16 @@
 #include <QAbstractTableModel>
 #include <QStyledItemDelegate>
 
-#include <qhidapi.h>
+#include "qhidapi_global.h"
+#include "qhidapi.h"
+#include "qhiddeviceinfomodel.h"
 
-class QHidDeviceInfoModel : public QAbstractTableModel {
+class QHIDAPISHARED_EXPORT QHidDeviceInfoModel : public QAbstractTableModel {
     Q_OBJECT
 public:
     explicit QHidDeviceInfoModel(QObject *parent = 0);
     explicit QHidDeviceInfoModel(QList<QHidDeviceInfo> data, QObject *parent = 0);
+    ~QHidDeviceInfoModel();
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const ;
     int columnCount(const QModelIndex &parent = QModelIndex()) const;

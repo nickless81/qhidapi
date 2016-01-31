@@ -7,6 +7,10 @@ QHidDeviceInfoModel::QHidDeviceInfoModel(QList<QHidDeviceInfo> data, QObject *pa
     m_data = data;
 }
 
+QHidDeviceInfoModel::~QHidDeviceInfoModel() {
+
+}
+
 void QHidDeviceInfoModel::setDataSet(QList<QHidDeviceInfo> data) {
     emit beginResetModel();
     m_data = data;

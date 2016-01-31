@@ -2,11 +2,10 @@
 #define UDEVMONITOR_H
 
 #include <QObject>
-#include <wrappableobject.h>
 
 class QPlainTextEdit;
 
-class UdevMonitor : public WrappableObject {
+class UdevMonitor : public QObject {
     Q_OBJECT
 public:
     explicit UdevMonitor(QPlainTextEdit *edit, QObject *parent = 0);

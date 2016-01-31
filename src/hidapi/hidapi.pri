@@ -1,10 +1,10 @@
-TARGET = QHidApi
-QT = core
+INCLUDEPATH += $$PWD
+DEPENDPATH += $$PWD
 
-load(qt_module)
+QT = core gui
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-DEFINES += QHIDAPI_LIBRARY
-#DEFINES += USE_LIBUSB
+!build_hidapi_lib:DEFINES += HIDAPI_NO_LIB
 
 SOURCES += \
     qhidapi.cpp \
@@ -14,8 +14,8 @@ SOURCES += \
     qhiddeviceinfoview.cpp
 
 HEADERS += \
-    qhidapi.h \
     qhidapi_global.h \
+    qhidapi.h \
     qhiddeviceinfomodel.h \
     qhiddeviceinfo.h \
     qhidapi_p.h \

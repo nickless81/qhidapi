@@ -1,21 +1,15 @@
 TARGET = QHidApi
 
-QT = core
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+QMAKE_DOCS = $$PWD/doc/qhidapi.qdocconf
 
 load(qt_module)
 
 DEFINES += QHIDAPI_LIBRARY
 DEFINES += USE_LIBUSB
 
-include(qhidapi.pri)
+CONFIG += build_hidapi_lib
+include(hidapi.pri)
 
-unix|win32|macx:contains(DEFINES, USE_LIBUSB) | android {
-    SOURCES += libusb/hid.c
-    INCLUDEPATH += /usr/include/libusb-1.0
-    LIBS += -lusb-1.0
-} else {
-    unix: SOURCES += linux/hid.c
-    win32: SOURCES += linux/hid.c
-    macx: SOURCES += linux/hid.c
-}
+QMAKE_TARGET_COMPANY = "Simon Meaden"
+QMAKE_TARGET_COPYRIGHT = "Copyright (C) 2014-2016 Simon Meaden <simonmeaden@smelecomp.co.uk>"
+QMAKE_TARGET_DESCRIPTION = "USB HID reader/writer for Qt5"

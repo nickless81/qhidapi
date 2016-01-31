@@ -1,5 +1,5 @@
 /****************************************************************************
-** Copyright (c) 2013 Debao Zhang <hello@debao.me>
+** Copyright (c) 2014-1016 Simon Meaden <simonmeaden@smelecomp.co.uk>
 ** All right reserved.
 **
 ** Permission is hereby granted, free of charge, to any person obtaining
@@ -24,28 +24,21 @@
 ****************************************************************************/
 
 /*!
-    \title Qt Xlsx
+    \title QHidApi
     \page index.html
-    \brief Qt Xlsx provides functionality for handling .xlsx files.
+    \brief QHidApi provides USB HID IO functionality.
 
-    The \l{Qt Xlsx C++ Classes}{Qt Xlsx Module} provides a set of classes to read and write Excel files. It doesn't require
-    Microsoft Excel and can be used in any platform that Qt5 supported. The library can be used to
-
-    \list
-       \li \l{Hello QtXlsx Example}{Generate a new .xlsx file from scratch}
-       \li \l{Extract Data Example}{Extract data from an existing .xlsx file}
-       \li Edit an existing .xlsx file
-    \endlist
-
-    \image xlsx_demo.gif
+    The \l{QHidApi C++ Classes}{QHidApi Module} provides a set of classes to read and write to/from USB under the HID format. 
+    It doesn't require that the HidApi library be included as the HIDAPI classes are included and it can be used in any platform
+    that Qt5 supported.
 
     \table
       \row
-        \li Source code: \li \l{https://github.com/dbzhang800/QtXlsxWriter}
+        \li Source code: \li \l{https://github.com/simonmeaden/qhidapi}
       \row
-        \li Issures: \li \l{https://github.com/dbzhang800/QtXlsxWriter/issues}
+        \li Issures: \li \l{https://github.com/simonmeaden/qhidapi/issues}
       \row
-        \li License: \li MIT
+        \li License: \li GNU 
     \endtable
 
     \section1 Getting Started

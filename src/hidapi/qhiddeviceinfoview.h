@@ -4,9 +4,10 @@
 #include <QTableView>
 #include <QHeaderView>
 
+#include "qhidapi_global.h"
 #include "hexformatdelegate.h"
 
-class QHidDeviceInfoView : public QTableView {
+class QHIDAPISHARED_EXPORT QHidDeviceInfoView : public QTableView {
     Q_OBJECT
 public:
     explicit QHidDeviceInfoView(QWidget *parent = 0);

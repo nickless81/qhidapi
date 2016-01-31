@@ -1,0 +1,11 @@
+#ifndef QT_QHIDAPI_MODULE_H
+#define QT_QHIDAPI_MODULE_H
+#include <QHidApi/QHidApiDepends>
+#include "hexformatdelegate.h"
+#include "hidapi.h"
+#include "qhidapi.h"
+#include "qhiddeviceinfo.h"
+#include "qhiddeviceinfomodel.h"
+#include "qhiddeviceinfoview.h"
+#include "qhidapiversion.h"
+#endif

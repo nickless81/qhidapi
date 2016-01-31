@@ -1,5 +1,5 @@
 %modules = ( # path to module name map
-    "QHidApi" => "$basedir/src/qhidapi",
+    "QHidApi" => "$basedir/src/hidapi",
 );
 
 %moduleheaders = ( # restrict the module headers to those found in relative path

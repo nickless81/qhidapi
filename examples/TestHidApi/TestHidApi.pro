@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui QHidApi
+QT       += core gui hidapi
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -48,7 +48,7 @@ HEADERS  += \
 
 FORMS    +=
 
-TestHidApi.depends += qhidapi
+#TestHidApi.depends += qhidapi
 
 #== qhidapi =====================================================================================
 #win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../lib/ -lqhidapi

@@ -18,11 +18,10 @@
 #include <QTimer>
 #include <QScrollArea>
 #include <QTabWidget>
+#include <QThread>
 
-#include <qhidapi.h>
-#include <qhiddeviceinfomodel.h>
+#include <QHidApi>
 
-class QHidDeviceInfoModel;
 struct udev;
 
 class MainWindow : public QMainWindow {
@@ -42,7 +41,7 @@ protected slots:
 //    void udevMonitoring();
     void connectDevice();
     void disconnectDevice();
-    void rescan(ushort vendorId=0x0, ushort productId=0x0);
+    void rescan(ushort mVendorId=0x0, ushort mProductId=0x0);
     int sendOutputReport();
     int sendFeatureReport();
     int getFeatureReport();
@@ -50,21 +49,21 @@ protected slots:
     void timeout();
 
 protected:
-    QHidApi *api;
-    QList<QHidDeviceInfo> devices;
-    QHidDeviceInfoModel m_model;
-    QTableView *infoView;
-    QPushButton *connectBtn, *disconnectBtn, *rescanBtn, *clearBtn, *outputBtn, *featureBtn, *getFeatureBtn;
-    QPlainTextEdit *inputText/*, *udevMonitor*/;
-    QLineEdit *outputTextEdit, *featureTextEdit, *getFeatureTextEdit;
-    QSpinBox *outputLenBox, *featureLenBox, *outputIdBox, *featureIdBox, *getFeatureIdBox;
-    QLabel *connectedLbl;
-    QTabWidget *m_tabs, *udevTabs;
+    QHidApi *pHidApi;
+    QList<QHidDeviceInfo> mDevices;
+    QHidDeviceInfoModel mModel;
+    QTableView *pInfoView;
+    QPushButton *pConnectBtn, *pDisconnectBtn, *pSescanBtn, *pClearBtn, *pOutputBtn, *pFeatureBtn, *pGetFeatureBtn;
+    QPlainTextEdit *pInputText/*, *udevMonitor*/;
+    QLineEdit *pOutputTextEdit, *pFeatureTextEdit, *pGetFeatureTextEdit;
+    QSpinBox *pOutputLenBox, *pFeatureLenBox, *pOutputIdBox, *pFeatureIdBox, *pGetFeatureIdBox;
+    QLabel *pConnectedLbl;
+    QTabWidget *pTabs, *pUdevTabs;
 
-    quint32 connectedDevice;
-    ushort vendorId, productId, releaseNumber;
-    QString manufacturer, product;
-    QString serialNumber;
+    quint32 mConnectedDevice;
+    ushort mVendorId, mProductId, mReleaseNumber;
+    QString mManufacturer, mProduct;
+    QString mSerialNumber;
 
     void initBuild();
     QFrame* initInfoFrame();

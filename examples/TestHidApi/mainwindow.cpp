@@ -25,14 +25,14 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::hidData() {
-    api = new QHidApi(this);
+    pHidApi = new QHidApi(this);
 
     // get all HID devices.
-    devices = api->enumerate(0x0, 0x0);    
-    m_model.setDataSet(devices);
-    infoView->setModel(&m_model);
+    mDevices = pHidApi->enumerate(0x0, 0x0);
+    mModel.setDataSet(mDevices);
+    pInfoView->setModel(&mModel);
 
-    connectedDevice = 0;
+    mConnectedDevice = 0;
     // wait for half a second before calling the read function.
     QTimer::singleShot(500, Qt::CoarseTimer, this, SLOT(timeout()));
 }
@@ -62,7 +62,7 @@ void MainWindow::udevData() {
         QString s = QString("%1").arg(udev_device_get_devnode(dev));
 
         QPlainTextEdit *edit = new QPlainTextEdit(this);
-        udevTabs->addTab(edit, s);
+        pUdevTabs->addTab(edit, s);
 
         dev = udev_device_get_parent_with_subsystem_devtype(
                     dev,
@@ -129,7 +129,8 @@ void MainWindow::udevData() {
 
 //void MainWindow::udevMonitoring() {
 //    UdevMonitor *monitor = new UdevMonitor(udevMonitor,this);
-//    /*QThread *thread = */WrappableObject::wrapObjectInThreadAndStart(monitor, this);
+//    QThread *thread = new QThread(this);
+//    monitor->moveToThread(thread);
 //}
 
 void MainWindow::initBuild() {
@@ -140,8 +141,8 @@ void MainWindow::initBuild() {
     QGridLayout *mainLayout = new QGridLayout;
     mainFrame->setLayout(mainLayout);
 
-    m_tabs = new QTabWidget(this);
-    mainLayout->addWidget(m_tabs, 0, 0);
+    pTabs = new QTabWidget(this);
+    mainLayout->addWidget(pTabs, 0, 0);
 
 //    udevMonitor = new QPlainTextEdit(this);
 //    m_tabs->addTab(udevMonitor, "UDEV Monitoring");
@@ -149,7 +150,7 @@ void MainWindow::initBuild() {
     QFrame *hidFrame = new QFrame(this);
     QGridLayout *hidLayout = new QGridLayout;
     hidFrame->setLayout(hidLayout);
-    m_tabs->addTab(hidFrame, "HID Data");
+    pTabs->addTab(hidFrame, "HID Data");
 //    setCentralWidget(frame);
 
     hidLayout->addWidget(initInfoFrame(), 0, 0);
@@ -160,10 +161,10 @@ void MainWindow::initBuild() {
     QGridLayout *udevLayout = new QGridLayout;
     udevFrame->setLayout(udevLayout);
 
-    udevTabs = new QTabWidget(this);
-    udevLayout->addWidget(udevTabs);
+    pUdevTabs = new QTabWidget(this);
+    udevLayout->addWidget(pUdevTabs);
 
-    m_tabs->addTab(udevFrame, "UDEV Data");
+    pTabs->addTab(udevFrame, "UDEV Data");
 
     QPushButton *closeBtn = new QPushButton(tr("Close"), this);
     mainLayout->addWidget(closeBtn, 1, 0);
@@ -180,14 +181,14 @@ QFrame* MainWindow::initInputFrame() {
 
     layout->addWidget(new QLabel(tr("Data received from the device appears in the Input section."), this), 0, 0);
 
-    inputText = new QPlainTextEdit(this);
-    inputText->setCenterOnScroll(true);
-    inputText->setWordWrapMode(QTextOption::NoWrap);
-    layout->addWidget(inputText, 1, 0);
+    pInputText = new QPlainTextEdit(this);
+    pInputText->setCenterOnScroll(true);
+    pInputText->setWordWrapMode(QTextOption::NoWrap);
+    layout->addWidget(pInputText, 1, 0);
 
-    clearBtn = new QPushButton(tr("Clear"), this);
-    layout->addWidget(clearBtn, 1, 1);
-    connect(clearBtn, SIGNAL(clicked()), this, SLOT(clear()));
+    pClearBtn = new QPushButton(tr("Clear"), this);
+    layout->addWidget(pClearBtn, 1, 1);
+    connect(pClearBtn, SIGNAL(clicked()), this, SLOT(clear()));
 
     return frame;
 }
@@ -203,63 +204,63 @@ QFrame* MainWindow::initDataFrame() {
     layout->addWidget(new QLabel(tr("Length"), this), 0, 1, 1, 1, Qt::AlignHCenter);
     layout->addWidget(new QLabel(tr("Rep. Number"), this), 0, 2, 1, 1, Qt::AlignHCenter);
 
-    outputTextEdit = new QLineEdit(this);
-    outputTextEdit->setText("OUTPUT");
-    layout->addWidget(outputTextEdit, 1, 0);
+    pOutputTextEdit = new QLineEdit(this);
+    pOutputTextEdit->setText("OUTPUT");
+    layout->addWidget(pOutputTextEdit, 1, 0);
 
-    outputLenBox = new QSpinBox(this);
-    outputLenBox->setMinimum(0);
-    outputLenBox->setMaximum(255);
-    layout->addWidget(outputLenBox, 1, 1);
+    pOutputLenBox = new QSpinBox(this);
+    pOutputLenBox->setMinimum(0);
+    pOutputLenBox->setMaximum(255);
+    layout->addWidget(pOutputLenBox, 1, 1);
 
-    outputIdBox = new QSpinBox(this);
-    outputIdBox->setMinimum(0);
-    outputIdBox->setMaximum(0xFF);
-    outputIdBox->setDisplayIntegerBase(16);
-    outputIdBox->setPrefix("0x");
-    layout->addWidget(outputIdBox, 1, 2);
+    pOutputIdBox = new QSpinBox(this);
+    pOutputIdBox->setMinimum(0);
+    pOutputIdBox->setMaximum(0xFF);
+    pOutputIdBox->setDisplayIntegerBase(16);
+    pOutputIdBox->setPrefix("0x");
+    layout->addWidget(pOutputIdBox, 1, 2);
 
-    outputBtn = new QPushButton(tr("Output"), this);
-    outputBtn->setEnabled(false);
-    layout->addWidget(outputBtn, 1, 3);
-    connect(outputBtn, SIGNAL(clicked()), this, SLOT(sendOutputReport()));
+    pOutputBtn = new QPushButton(tr("Output"), this);
+    pOutputBtn->setEnabled(false);
+    layout->addWidget(pOutputBtn, 1, 3);
+    connect(pOutputBtn, SIGNAL(clicked()), this, SLOT(sendOutputReport()));
 
-    featureTextEdit = new QLineEdit(this);
-    featureTextEdit->setText("FEATURE");
-    layout->addWidget(featureTextEdit, 2, 0);
+    pFeatureTextEdit = new QLineEdit(this);
+    pFeatureTextEdit->setText("FEATURE");
+    layout->addWidget(pFeatureTextEdit, 2, 0);
 
-    featureLenBox = new QSpinBox(this);
-    featureLenBox->setMinimum(0);
-    featureLenBox->setMaximum(64);
-    layout->addWidget(featureLenBox, 2, 1);
+    pFeatureLenBox = new QSpinBox(this);
+    pFeatureLenBox->setMinimum(0);
+    pFeatureLenBox->setMaximum(64);
+    layout->addWidget(pFeatureLenBox, 2, 1);
 
-    featureIdBox = new QSpinBox(this);
-    featureIdBox->setMinimum(0);
-    featureIdBox->setMaximum(0xFF);
-    featureIdBox->setDisplayIntegerBase(16);
-    featureIdBox->setPrefix("0x");
-    layout->addWidget(featureIdBox, 2, 2);
+    pFeatureIdBox = new QSpinBox(this);
+    pFeatureIdBox->setMinimum(0);
+    pFeatureIdBox->setMaximum(0xFF);
+    pFeatureIdBox->setDisplayIntegerBase(16);
+    pFeatureIdBox->setPrefix("0x");
+    layout->addWidget(pFeatureIdBox, 2, 2);
 
-    featureBtn = new QPushButton(tr("Feature"), this);
-    featureBtn->setEnabled(false);
-    layout->addWidget(featureBtn, 2, 3);
-    connect(featureBtn, SIGNAL(clicked()), this, SLOT(sendFeatureReport()));
+    pFeatureBtn = new QPushButton(tr("Feature"), this);
+    pFeatureBtn->setEnabled(false);
+    layout->addWidget(pFeatureBtn, 2, 3);
+    connect(pFeatureBtn, SIGNAL(clicked()), this, SLOT(sendFeatureReport()));
 
-    getFeatureTextEdit = new QLineEdit(this);
-    getFeatureTextEdit->setText("GET FEATURE");
-    layout->addWidget(getFeatureTextEdit, 3, 0);
+    pGetFeatureTextEdit = new QLineEdit(this);
+    pGetFeatureTextEdit->setText("GET FEATURE");
+    layout->addWidget(pGetFeatureTextEdit, 3, 0);
 
-    getFeatureIdBox = new QSpinBox(this);
-    getFeatureIdBox->setMinimum(0);
-    getFeatureIdBox->setMaximum(0xFF);
-    getFeatureIdBox->setDisplayIntegerBase(16);
-    getFeatureIdBox->setPrefix("0x");
-    layout->addWidget(getFeatureIdBox, 3, 2);
+    pGetFeatureIdBox = new QSpinBox(this);
+    pGetFeatureIdBox->setMinimum(0);
+    pGetFeatureIdBox->setMaximum(0xFF);
+    pGetFeatureIdBox->setDisplayIntegerBase(16);
+    pGetFeatureIdBox->setPrefix("0x");
+    layout->addWidget(pGetFeatureIdBox, 3, 2);
 
-    getFeatureBtn = new QPushButton(tr("Get feature"), this);
-    getFeatureBtn->setEnabled(false);
-    layout->addWidget(getFeatureBtn, 3, 3);
-    connect(getFeatureBtn, SIGNAL(clicked()), this, SLOT(getFeatureReport()));
+    pGetFeatureBtn = new QPushButton(tr("Get feature"), this);
+    pGetFeatureBtn->setEnabled(false);
+    layout->addWidget(pGetFeatureBtn, 3, 3);
+    connect(pGetFeatureBtn, SIGNAL(clicked()), this, SLOT(getFeatureReport()));
 
     QLabel *lbl1 = new QLabel(tr("Output data bytes can be entered in the Output section, "
                                  "separated by space, comma or brackets. Data starting with "
@@ -287,27 +288,27 @@ QFrame* MainWindow::initInfoFrame() {
     QLabel *lbl1 = new QLabel(tr("Select a device and press Connect."), this);
     layout->addWidget(lbl1, 0, 0, 1, 2);
 
-    infoView = new QTableView(this);
-    infoView->horizontalHeader()->setStretchLastSection(true);
-    infoView->setSelectionMode(QTableView::SingleSelection);
-    infoView->setSelectionBehavior(QTableView::SelectRows);
-    layout->addWidget(infoView, 1, 0, 3, 1);
+    pInfoView = new QTableView(this);
+    pInfoView->horizontalHeader()->setStretchLastSection(true);
+    pInfoView->setSelectionMode(QTableView::SingleSelection);
+    pInfoView->setSelectionBehavior(QTableView::SelectRows);
+    layout->addWidget(pInfoView, 1, 0, 3, 1);
 
-    connectBtn = new QPushButton(tr("Connect"), this);
-    layout->addWidget(connectBtn, 1, 1);
-    connect(connectBtn, SIGNAL(clicked()), this, SLOT(connectDevice()));
+    pConnectBtn = new QPushButton(tr("Connect"), this);
+    layout->addWidget(pConnectBtn, 1, 1);
+    connect(pConnectBtn, SIGNAL(clicked()), this, SLOT(connectDevice()));
 
-    disconnectBtn = new QPushButton(tr("Disconnect"), this);
-    disconnectBtn->setEnabled(false);
-    layout->addWidget(disconnectBtn, 2, 1);
-    connect(disconnectBtn, SIGNAL(clicked()), this, SLOT(disconnectDevice()));
+    pDisconnectBtn = new QPushButton(tr("Disconnect"), this);
+    pDisconnectBtn->setEnabled(false);
+    layout->addWidget(pDisconnectBtn, 2, 1);
+    connect(pDisconnectBtn, SIGNAL(clicked()), this, SLOT(disconnectDevice()));
 
-    rescanBtn = new QPushButton(tr("Rescan"), this);
-    layout->addWidget(rescanBtn, 3, 1);
-    connect(rescanBtn, SIGNAL(clicked()), this, SLOT(rescan()));
+    pSescanBtn = new QPushButton(tr("Rescan"), this);
+    layout->addWidget(pSescanBtn, 3, 1);
+    connect(pSescanBtn, SIGNAL(clicked()), this, SLOT(rescan()));
 
-    connectedLbl = new QLabel(tr("Disconnected"), this);
-    layout->addWidget(connectedLbl, 4, 0, 1, 2);
+    pConnectedLbl = new QLabel(tr("Disconnected"), this);
+    layout->addWidget(pConnectedLbl, 4, 0, 1, 2);
 
     return frame;
 }
@@ -316,39 +317,39 @@ QFrame* MainWindow::initInfoFrame() {
  * Opens the selected device and sets the connectedDevice to the id of this device.
  */
 void MainWindow::connectDevice() {
-    if (connectedDevice > 0) return;
+    if (mConnectedDevice > 0) return;
 
-    QModelIndex selRow = infoView->currentIndex(), index;
-    QVariant vId = m_model.index(selRow.row(), 0).data();
-    QVariant m = m_model.index(selRow.row(), 1).data();
-    QVariant pId = m_model.index(selRow.row(), 2).data();
-    QVariant p = m_model.index(selRow.row(), 3).data();
-    QVariant sn = m_model.index(selRow.row(), 4).data();
-    QVariant rn = m_model.index(selRow.row(), 5).data();
+    QModelIndex selRow = pInfoView->currentIndex(), index;
+    QVariant vId = mModel.index(selRow.row(), 0).data();
+    QVariant m = mModel.index(selRow.row(), 1).data();
+    QVariant pId = mModel.index(selRow.row(), 2).data();
+    QVariant p = mModel.index(selRow.row(), 3).data();
+    QVariant sn = mModel.index(selRow.row(), 4).data();
+    QVariant rn = mModel.index(selRow.row(), 5).data();
 
-    quint32 id = api->open(vId.toUInt(), pId.toUInt(), sn.toString());
+    quint32 id = pHidApi->open(vId.toUInt(), pId.toUInt(), sn.toString());
     if (id > 0) {
-        connectedDevice = id;
-        vendorId = vId.toUInt();
-        manufacturer = m.toString();
-        productId = pId.toUInt();
-        product = p.toString();
-        serialNumber = sn.toString();
-        releaseNumber = rn.toUInt();
-        api->setNonBlocking(id);
+        mConnectedDevice = id;
+        mVendorId = vId.toUInt();
+        mManufacturer = m.toString();
+        mProductId = pId.toUInt();
+        mProduct = p.toString();
+        mSerialNumber = sn.toString();
+        mReleaseNumber = rn.toUInt();
+        pHidApi->setNonBlocking(id);
         QString s = QString(tr("Connected to Vendor:0x%1, Product:%2, 0x%3, %4"))
-                .arg(QString::number(vendorId, 16))
-                .arg(manufacturer)
-                .arg(QString::number(productId, 16))
-                .arg(product);
-        connectedLbl->setText(s);
+                .arg(QString::number(mVendorId, 16))
+                .arg(mManufacturer)
+                .arg(QString::number(mProductId, 16))
+                .arg(mProduct);
+        pConnectedLbl->setText(s);
 
-        connectBtn->setEnabled(false);
-        disconnectBtn->setEnabled(true);
-        outputBtn->setEnabled(true);
-        featureBtn->setEnabled(true);
-        getFeatureBtn->setEnabled(true);
-        inputText->clear();
+        pConnectBtn->setEnabled(false);
+        pDisconnectBtn->setEnabled(true);
+        pOutputBtn->setEnabled(true);
+        pFeatureBtn->setEnabled(true);
+        pGetFeatureBtn->setEnabled(true);
+        pInputText->clear();
 
     } else {
         QMessageBox::warning(this, tr("Open Failed"), tr("Unable to open device!"), QMessageBox::Ok);
@@ -356,42 +357,42 @@ void MainWindow::connectDevice() {
 }
 
 void MainWindow::disconnectDevice() {
-    if (connectedDevice == 0) return;
+    if (mConnectedDevice == 0) return;
 
-    api->close(connectedDevice);
-    connectedDevice = 0;
-    connectedLbl->setText(tr("Disconnected"));
-    outputBtn->setEnabled(false);
-    featureBtn->setEnabled(false);
-    getFeatureBtn->setEnabled(false);
-    connectBtn->setEnabled(false);
-    disconnectBtn->setEnabled(false);
+    pHidApi->close(mConnectedDevice);
+    mConnectedDevice = 0;
+    pConnectedLbl->setText(tr("Disconnected"));
+    pOutputBtn->setEnabled(false);
+    pFeatureBtn->setEnabled(false);
+    pGetFeatureBtn->setEnabled(false);
+    pConnectBtn->setEnabled(false);
+    pDisconnectBtn->setEnabled(false);
 
 }
 
 void MainWindow::rescan(ushort vendorId, ushort productId) {
-    QList<QHidDeviceInfo> list = api->enumerate(vendorId, productId);
-    m_model.setDataSet(list);
+    QList<QHidDeviceInfo> list = pHidApi->enumerate(vendorId, productId);
+    mModel.setDataSet(list);
 }
 
 int MainWindow::sendOutputReport() {
 
-    quint8 reportNumber = outputIdBox->value();
+    quint8 reportNumber = pOutputIdBox->value();
 
     QByteArray data;
     data.append(reportNumber);
 
-    QByteArray text = outputTextEdit->text().toLatin1();
-    int len = outputLenBox->value();
+    QByteArray text = pOutputTextEdit->text().toLatin1();
+    int len = pOutputLenBox->value();
     if (len == 0)
         len = text.length();
 
 
-    int written = api->write(connectedDevice, data);
+    int written = pHidApi->write(mConnectedDevice, data);
 
     if (written < 0) {
         QString s(tr("Could not write to device. Error reported was: %1"));
-        s = s.arg(api->error(connectedDevice));
+        s = s.arg(pHidApi->error(mConnectedDevice));
         QMessageBox::warning(this, tr("Error Writing"), s, QMessageBox::Ok);
     }
 
@@ -399,22 +400,22 @@ int MainWindow::sendOutputReport() {
 }
 
 int MainWindow::sendFeatureReport() {
-    quint8 reportNumber = featureIdBox->value();
+    quint8 reportNumber = pFeatureIdBox->value();
 
     QByteArray data;
     data.append(reportNumber);
 
-    QByteArray text = featureTextEdit->text().toLatin1();
-    int len = featureLenBox->value();
+    QByteArray text = pFeatureTextEdit->text().toLatin1();
+    int len = pFeatureLenBox->value();
     if (len == 0)
         len = text.length();
 
 
-    int written = api->sendFeatureReport(connectedDevice, reportNumber, data);
+    int written = pHidApi->sendFeatureReport(mConnectedDevice, reportNumber, data);
 
     if (written < 0) {
         QString s(tr("Could not send feature report to device. Error reported was: %1"));
-        s = s.arg(api->error(connectedDevice));
+        s = s.arg(pHidApi->error(mConnectedDevice));
         QMessageBox::warning(this, tr("Error Writing"), s, QMessageBox::Ok);
     }
 
@@ -422,13 +423,13 @@ int MainWindow::sendFeatureReport() {
 }
 
 int MainWindow::getFeatureReport() {
-    quint8 reportNumber = getFeatureIdBox->value();
+    quint8 reportNumber = pGetFeatureIdBox->value();
 
-    QByteArray data = api->featureReport(connectedDevice, reportNumber);
+    QByteArray data = pHidApi->featureReport(mConnectedDevice, reportNumber);
 
     if (data.isEmpty()) {
         QString s(tr("Could not get feature report from device. Error reported was: %1"));
-        s = s.arg(api->error(connectedDevice));
+        s = s.arg(pHidApi->error(mConnectedDevice));
         QMessageBox::warning(this, tr("Error Writing"), s, QMessageBox::Ok);
     }
 
@@ -436,18 +437,18 @@ int MainWindow::getFeatureReport() {
 }
 
 void MainWindow::clear() {
-    inputText->clear();
+    pInputText->clear();
 }
 
 void MainWindow::timeout() {
 
-    if (connectedDevice > 0) {
-        QByteArray data = api->read(connectedDevice);
+    if (mConnectedDevice > 0) {
+        QByteArray data = pHidApi->read(mConnectedDevice);
 
         if (!data.isEmpty()) {
             QString s = tr("Received %1 bytes:\n").arg(data.length());
-            inputText->appendPlainText(s);
-            inputText->ensureCursorVisible();
+            pInputText->appendPlainText(s);
+            pInputText->ensureCursorVisible();
         }
     }
 

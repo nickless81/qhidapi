@@ -7,7 +7,7 @@
 #include <locale.h>
 #include <unistd.h>
 
-UdevMonitor::UdevMonitor(QPlainTextEdit *edit, QObject *parent) : WrappableObject(parent) {
+UdevMonitor::UdevMonitor(QPlainTextEdit *edit, QObject *parent) : QObject(parent) {
     struct udev *udev;
     struct udev_device *dev;
     struct udev_monitor *mon;

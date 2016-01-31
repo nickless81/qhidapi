@@ -1,3 +1,3 @@
 #! [1]
-QT += xlsx
+QT += hidapi
 #! [1]
