@@ -109,11 +109,10 @@ The package contains a **hidapi.pri** file that allows you to integrate the comp
 		uint product = 0xF1FA;
 		QString serial = QString("1.0.0");
 		
-        pHidApi = new QHidApi(this);
-        mId = pHidApi->open(vendor, product, serial); // TODO id's in config ??
+                pHidApi = new QHidApi(this);
+                mId = pHidApi->open(vendor, product, serial); // TODO id's in config ??
 		if (mId) {
-			pHidApi->setNonBlocking(mId); // set the read() to be non-blocking.
-			
+			pHidApi->setNonBlocking(mId); // set the read() to be non-blocking.	
 			return -1;
 		}
 		
@@ -125,12 +124,12 @@ The package contains a **hidapi.pri** file that allows you to integrate the comp
 	
 	void USBDevice::run() {
 		while (true) {
-        mReadData = pHidApi->read(mId, timeout);
-        if (!mReadData.isEmpty())
-            handleReadyRead();
-        msleep(100);
-    }
-}
+                    mReadData = pHidApi->read(mId, timeout);
+                    if (!mReadData.isEmpty())
+                        handleReadyRead();
+                    msleep(100);
+                }
+        }
 
 	
 	void USBDevice::sendData(QByteArray request) {
