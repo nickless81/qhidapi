@@ -14,7 +14,7 @@ hidapi classes are available via QHidApi methods.
 
 License
 =======You may use, distribute and copy the files under the terms of
-GNU General Public License version 3 (see the file gpl3.txt for details).
+Zero clause BSD License (see https://spdx.org/licenses/0BSD.html for details).
 
 This code is just a wrapper around Signal11's hidapi which is also available
 under the GPLV3 license.
